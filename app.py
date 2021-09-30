@@ -1,6 +1,7 @@
-import json
 from flask import Flask
-from flask_restx import Api, Resource
+from flask_restx import Api
+
+from flask_cors import CORS
 
 # API LIST
 from routes.auth_routes import AUTH
@@ -9,7 +10,9 @@ from routes.openapi_routes import OPENAPI
 from routes.openApis.hp_routes import HOUSEHOLDPOWER
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
+
 
 api.add_namespace(AUTH, "/auth")
 api.add_namespace(APIGRP, "/apigroup")

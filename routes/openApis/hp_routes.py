@@ -13,7 +13,6 @@ HOUSEHOLDPOWER_ID = 2
 
 @HOUSEHOLDPOWER.route("")
 class HouseholdPowerAPI(Resource):
-    @check
     @check_key
     def get(self):
         access_key = req.args.get("accessKey")

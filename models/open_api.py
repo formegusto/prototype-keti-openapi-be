@@ -2,6 +2,10 @@ from common.mysql_connect import conn_mysqldb
 import datetime as dt
 import bcrypt
 
+OPEN_API_COLUMNS = ["id", "name", "title", "content", "restUri", "grpId"]
+USE_OPEN_API_COLUMNS = ["id", "name", "title",
+                        "content", "restUri", "grpId", "accessKey"]
+
 
 class OPEN_API():
     def __init__(self, name, title, content, rest_uri, grp_id):
@@ -51,7 +55,10 @@ class OPEN_API():
 
         all_api = list()
         for data in db_datas:
-            all_api.append(data)
+            in_dict = dict()
+            for idx, _ in enumerate(data):
+                in_dict[OPEN_API_COLUMNS[idx]] = _
+            all_api.append(in_dict)
 
         return all_api
 
@@ -84,9 +91,15 @@ class OPEN_API():
 
         use_apis = list()
         for use_api in uses:
+            in_dict = dict()
+
             api_id = use_api[1]
             api = OPEN_API.find(api_id)
-            use_apis.append(api)
+
+            for idx, _ in enumerate(api):
+                in_dict[USE_OPEN_API_COLUMNS[idx]] = _
+            in_dict[USE_OPEN_API_COLUMNS[6]] = use_api[2]
+            use_apis.append(in_dict)
 
         return use_apis
 

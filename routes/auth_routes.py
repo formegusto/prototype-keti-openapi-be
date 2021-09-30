@@ -47,6 +47,18 @@ class AuthAPI(Resource):
             }, status
 
 
+@AUTH.route("/check")
+class AuthCheckAPI(Resource):
+    @check
+    def get(self):
+        token = req.headers.get("Authorization")
+        token_info = get_user_by_token(token)
+
+        return {
+            "userId": token_info['user_id']
+        }, 200
+
+
 @AUTH.route("/join")
 class JoinAPI(Resource):
     def post(self):

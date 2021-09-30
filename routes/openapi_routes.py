@@ -1,7 +1,7 @@
 from routes.auth_routes import check, get_user_by_token
 from flask import request as req
 from flask_restx import Namespace, Resource
-from models.open_api import OPEN_API
+from models.open_api import OPEN_API, OPEN_API_COLUMNS
 from models.user_info import USER_INFO
 
 OPENAPI = Namespace("open-api api")
@@ -90,6 +90,11 @@ class OpenAPIServiceDetail(Resource):
                 "message": "존재하지 않는 API 입니다."
             }, 404
 
+        api_dict = dict()
+
+        for idx, _ in enumerate(api):
+            api_dict[OPEN_API_COLUMNS[idx]] = _
+
         return {
-            "data": api
+            "data": api_dict
         }, 200
