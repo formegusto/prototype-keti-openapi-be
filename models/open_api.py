@@ -1,4 +1,6 @@
 from common.mysql_connect import conn_mysqldb
+import datetime as dt
+import bcrypt
 
 
 class OPEN_API():
@@ -21,3 +23,124 @@ class OPEN_API():
 
         db_cursor.execute(sql)
         db.commit()
+
+    @staticmethod
+    def find(api_id):
+        db = conn_mysqldb()
+        db_cursor = db.cursor()
+
+        sql = "SELECT * "\
+            + "FROM OPEN_API "\
+            + "WHERE ID='{}'".format(api_id)
+
+        db_cursor.execute(sql)
+        open_api_info = db_cursor.fetchone()
+
+        return open_api_info
+
+    @staticmethod
+    def find_all_by_grpId(grp_id):
+        db = conn_mysqldb()
+        db_cursor = db.cursor()
+
+        sql = "SELECT * "\
+            + "FROM OPEN_API "\
+            + "WHERE grpId='{}'".format(grp_id)
+        db_cursor.execute(sql)
+        db_datas = db_cursor.fetchall()
+
+        all_api = list()
+        for data in db_datas:
+            all_api.append(data)
+
+        return all_api
+
+    @staticmethod
+    def find_api_grp(api_name):
+        db = conn_mysqldb()
+        db_cursor = db.cursor()
+
+        sql = "SELECT * "\
+            + "FROM API_GROUP "\
+            + "WHERE name='{}'".format(api_name)
+        db_cursor.execute(sql)
+        api_group = db_cursor.fetchone()
+
+        return api_group
+
+    @staticmethod
+    def find_use_apis(user_id):
+        db = conn_mysqldb()
+        db_cursor = db.cursor()
+
+        use_sql = "SELECT * "\
+            + "FROM USER_USE_OPEN_API "\
+            + "WHERE userID={}".format(user_id)
+        db_cursor.execute(use_sql)
+        uses = db_cursor.fetchall()
+
+        if uses == None:
+            return None
+
+        use_apis = list()
+        for use_api in uses:
+            api_id = use_api[1]
+            api = OPEN_API.find(api_id)
+            use_apis.append(api)
+
+        return use_apis
+
+    @staticmethod
+    def check_used(api_id, user_id, access_key):
+        db = conn_mysqldb()
+        db_cursor = db.cursor()
+
+        sql = "SELECT * "\
+            + "FROM USER_USE_OPEN_API "\
+            + "WHERE userId='{}' ".format(user_id)\
+            + "AND apiId='{}' ".format(api_id)\
+            + "AND accessKey='{}'".format(access_key)
+
+        print(sql)
+
+        db_cursor.execute(sql)
+        is_used = db_cursor.fetchone()
+
+        return is_used
+
+    @staticmethod
+    def check_registed(api_id, user_id):
+        db = conn_mysqldb()
+        db_cursor = db.cursor()
+
+        sql = "SELECT * "\
+            + "FROM USER_USE_OPEN_API "\
+            + "WHERE userId='{}' ".format(user_id)\
+            + "AND apiId='{}'".format(api_id)
+
+        db_cursor.execute(sql)
+        is_registed = db_cursor.fetchone()
+
+        return is_registed
+
+    @staticmethod
+    def regist(api_id, user):
+        db = conn_mysqldb()
+        db_cursor = db.cursor()
+
+        now_time = dt.datetime.now().timestamp()
+        user_id, user_name = user[0], user[1]
+
+        token_info = "{}&{}&{}".format(now_time, user_id, user_name)
+        access_key = bcrypt.hashpw(token_info.encode(
+            "utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+        sql = "INSERT INTO USER_USE_OPEN_API("\
+            + "userId, apiId, accessKey) "\
+            + "VALUES ('{}', '{}', '{}')"\
+            .format(user_id, api_id, access_key)
+        print(sql)
+        db_cursor.execute(sql)
+        db.commit()
+
+        return access_key
