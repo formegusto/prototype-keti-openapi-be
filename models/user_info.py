@@ -55,3 +55,16 @@ class USER_INFO():
         user = db_cursor.fetchone()
 
         return user
+
+    @staticmethod
+    def findByAccessKey(access_key):
+        db = conn_mysqldb()
+        db_cursor = db.cursor()
+
+        sql = "SELECT * "\
+            + "FROM USER_USE_OPEN_API "\
+            + "WHERE accessKey='{}'".format(access_key)
+        db_cursor.execute(sql)
+        user = db_cursor.fetchone()
+
+        return user

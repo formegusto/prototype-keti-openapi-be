@@ -8,6 +8,7 @@ from routes.auth_routes import AUTH
 from routes.apigrp_routes import APIGRP
 from routes.openapi_routes import OPENAPI
 from routes.openApis.hp_routes import HOUSEHOLDPOWER
+from routes.openApis.clustering_routes import CLUSTERING
 
 app = Flask(__name__)
 CORS(app)
@@ -20,6 +21,7 @@ api.add_namespace(OPENAPI, "/openapi")
 
 # OPEN_APIs
 api.add_namespace(HOUSEHOLDPOWER, "/household_power")
+api.add_namespace(CLUSTERING, "/clustering")
 
 
 if __name__ == "__main__":

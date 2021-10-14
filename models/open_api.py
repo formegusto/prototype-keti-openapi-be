@@ -114,8 +114,6 @@ class OPEN_API():
             + "AND apiId='{}' ".format(api_id)\
             + "AND accessKey='{}'".format(access_key)
 
-        print(sql)
-
         db_cursor.execute(sql)
         is_used = db_cursor.fetchone()
 

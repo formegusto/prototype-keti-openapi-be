@@ -3,16 +3,16 @@ from flask import request as req
 from routes.auth_routes import check, get_user_by_token
 from routes.openApis.check_key import check_key
 from flask_restx import Namespace, Resource
-from models.openApis.household_power import HOUSEHOLD_POWER as HPDB
+from models.openApis.clustering import CLUSTERING as CLDB
 from models.open_api import OPEN_API
 from models.user_info import USER_INFO
 
-HOUSEHOLDPOWER = Namespace("open-api: household_power api")
-HOUSEHOLDPOWER_ID = 2
+CLUSTERING = Namespace("open-api: clustering api")
+CLUSTERING_ID = 4
 
 
-@HOUSEHOLDPOWER.route("")
-class HouseholdPowerAPI(Resource):
+@CLUSTERING.route("")
+class ClusteringAPI(Resource):
     @check_key
     def get(self):
         access_key = req.args.get("accessKey")
@@ -23,7 +23,7 @@ class HouseholdPowerAPI(Resource):
                 "message": "API를 신청해주세요."
             }, 401
 
-        is_used = OPEN_API.check_used(HOUSEHOLDPOWER_ID, user[0], access_key)
+        is_used = OPEN_API.check_used(CLUSTERING_ID, user[0], access_key)
 
         if is_used == None:
             return {
@@ -31,5 +31,5 @@ class HouseholdPowerAPI(Resource):
             }, 401
 
         return {
-            "data": HPDB.find()
+            "data": CLDB.find()
         }, 200
